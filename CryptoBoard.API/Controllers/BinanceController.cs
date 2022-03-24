@@ -1,25 +1,28 @@
-﻿using CryptoBoard.API.Models;
+﻿using CryptoBoard.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Flurl;
-using Flurl.Http;
 
 namespace CryptoBoard.API.Controllers
 {
     [Route("api/[controller]")]
     public class BinanceController : Controller
     {
-        [HttpGet]
-        public async Task<IActionResult> GetSymbols()
+        private readonly IBinanceService _binanceService;
+
+        public BinanceController(IBinanceService binanceService)
         {
-            var url = "https://api.binance.com/api/v3/exchangeInfo";
+            _binanceService = binanceService;
+        }
 
-            var result = await url.GetJsonAsync<CoinsList>();
+        [HttpGet("loadlist")]
+        public async Task<IActionResult> Binance()
+        {
+            await _binanceService.LoadCoinList();
 
-            return Ok(result);
+            return Ok();
         }
     }
 }
