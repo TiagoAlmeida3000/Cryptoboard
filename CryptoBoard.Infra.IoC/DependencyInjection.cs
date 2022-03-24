@@ -1,4 +1,9 @@
-﻿using CryptoBoard.Infra.Data.Context;
+﻿using CryptoBoard.Application.Interfaces;
+using CryptoBoard.Application.Mappings;
+using CryptoBoard.Application.Services;
+using CryptoBoard.Domain.Interfaces;
+using CryptoBoard.Infra.Data.Context;
+using CryptoBoard.Infra.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +23,12 @@ namespace CryptoBoard.Infra.IoC
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
             b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
+
+            services.AddScoped<IBinanceRepository, BinanceRepository>();
+
+            services.AddScoped<IBinanceService, BinanceService>();
+
+            services.AddAutoMapper(typeof(DomainToDToMappingProfile));
 
             return services;
         }

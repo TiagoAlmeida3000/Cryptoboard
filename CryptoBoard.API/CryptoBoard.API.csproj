@@ -9,10 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\CryptoBoard.Infra.IoC\CryptoBoard.Infra.IoC.csproj" />
   </ItemGroup>
 
