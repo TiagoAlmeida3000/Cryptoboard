@@ -15,6 +15,7 @@ namespace CryptoBoard.Application.Mappings
         {
             CreateMap<CoinList, CoinListDTO>().ReverseMap();
             CreateMap<Symbols, SymbolsDTO>().ReverseMap();
+            CreateMap<User, UserDTO>().ReverseMap();
         }
     }
 }
