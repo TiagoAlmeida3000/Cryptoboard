@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace CryptoBoard.Infra.Data.Repositories
+namespace CryptoBoard.API.Models
 {
-    public class UserRepository
+    public class CoinsList
     {
+        public Symbols[] symbols { get; set; }
     }
 }

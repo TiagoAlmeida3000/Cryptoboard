@@ -25,10 +25,8 @@ namespace CryptoBoard.Infra.IoC
             b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 
             services.AddScoped<IBinanceRepository, BinanceRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
 
             services.AddScoped<IBinanceService, BinanceService>();
-            services.AddScoped<IUserService, UserService>();
 
             services.AddAutoMapper(typeof(DomainToDToMappingProfile));
 
