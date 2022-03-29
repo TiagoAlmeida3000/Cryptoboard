@@ -11,6 +11,7 @@ namespace CryptoBoard.Domain.Interfaces
     {
         Task LoadCoinList();
         Task<Symbols> GetSymbolId(int? id);
-        Task<IEnumerable<Symbols>> GetListSymbols();
+        Task<IEnumerable<Symbols>> GetListSymbols(int skip, int take);
+        Task<int> CountSymbols();
     }
 }

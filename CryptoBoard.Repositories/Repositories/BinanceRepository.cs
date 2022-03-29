@@ -19,9 +19,14 @@ namespace CryptoBoard.Infra.Data.Repositories
             _applicationDbContext = applicationDbContext;
         }
 
-        public async Task<IEnumerable<Symbols>> GetListSymbols()
+        public async Task<int> CountSymbols()
         {
-            return await _applicationDbContext.symbols.ToListAsync();
+            return await _applicationDbContext.symbols.CountAsync();
+        }
+
+        public async Task<IEnumerable<Symbols>> GetListSymbols(int skip, int take)
+        {
+            return  await _applicationDbContext.symbols.AsNoTracking().Skip(skip).Take(take).ToListAsync(); 
         }
 
         public async Task<Symbols> GetSymbolId(int? id)

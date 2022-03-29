@@ -20,9 +20,15 @@ namespace CryptoBoard.Application.Services
             _binanceRepository = binanceRepository;
             _mapper = mapper;
         }
-        public async Task<IEnumerable<SymbolsDTO>> GetListSymbols()
+
+        public async Task<int> CountSymbols()
         {
-            var symbolsEntities = await _binanceRepository.GetListSymbols();
+            return await _binanceRepository.CountSymbols();
+            
+        }
+        public async Task<IEnumerable<SymbolsDTO>> GetListSymbols(int skip, int take)
+        {
+            var symbolsEntities = await _binanceRepository.GetListSymbols(skip, take);
             return _mapper.Map<IEnumerable<SymbolsDTO>>(symbolsEntities);
         }
 
@@ -36,5 +42,6 @@ namespace CryptoBoard.Application.Services
         {
             await _binanceRepository.LoadCoinList();
         }
+
     }
 }
