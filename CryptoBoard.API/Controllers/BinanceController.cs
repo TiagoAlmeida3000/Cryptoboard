@@ -1,4 +1,5 @@
-﻿using CryptoBoard.Application.Interfaces;
+﻿using CryptoBoard.Application.DTOs;
+using CryptoBoard.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,14 @@ namespace CryptoBoard.API.Controllers
             await _binanceService.LoadCoinList();
 
             return Ok();
+        }
+
+        [HttpGet("details/{id}")]
+        public async Task<IActionResult> Details(int id)
+        {
+            SymbolsDTO symbol = await _binanceService.GetSymbolId(id);
+
+            return Ok(new { symbol });
         }
     }
 }

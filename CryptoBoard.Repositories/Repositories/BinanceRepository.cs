@@ -26,7 +26,7 @@ namespace CryptoBoard.Infra.Data.Repositories
 
         public async Task<Symbols> GetSymbolId(int? id)
         {
-            return await _applicationDbContext.symbols.FindAsync();
+            return await _applicationDbContext.symbols.FindAsync(id);
         }
 
         public async Task LoadCoinList()
