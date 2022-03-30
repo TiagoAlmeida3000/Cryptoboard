@@ -16,5 +16,8 @@ namespace CryptoBoard.Application.Interfaces
         UserDTO GetName(string name);
         UserDTO Validar(UserDTO user);
         Task PostUser(UserDTO user);
+        string CreateToken(UserDTO userDTO);
+        bool ValidateHash(UserDTO userDTO, UserDTO user);
+        UserDTO NewUser(UserDTO userDTO);
     }
 }
