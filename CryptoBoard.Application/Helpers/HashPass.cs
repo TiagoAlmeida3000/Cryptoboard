@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CryptoBoard.API.Helpers
+namespace CryptoBoard.Application.Helpers
 {
     public class HashPass
     {
