@@ -10,8 +10,11 @@ namespace CryptoBoard.Application.Interfaces
     public interface IBinanceService
     {
         Task LoadCoinList();
+
         Task<SymbolsDTO> GetSymbolId(int? id);
+
         Task<IEnumerable<SymbolsDTO>> GetListSymbols(int skip, int take);
+
         Task<int> CountSymbols();
     }
 }

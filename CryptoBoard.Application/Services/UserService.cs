@@ -18,80 +18,55 @@ namespace CryptoBoard.Application.Services
     public class UserService : IUserService
     {
         private IUserRepository _userRepository;
+
+        private IJWTService _jWTService;
+
         private readonly IMapper _mapper;
 
-        public UserService(IUserRepository userRepository, IMapper mapper)
+        public UserService(IUserRepository userRepository, IMapper mapper, IJWTService jWTService)
         {
             _userRepository = userRepository;
+
             _mapper = mapper;
+
+            _jWTService = jWTService;
         }
-        
-        public UserDTO FindUser(int id)
+
+        public async Task<UserDTO> FindUserById(int id)
         {
-            var userEntity = _userRepository.FindUser(id);
+            var userEntity = await _userRepository.FindUserById(id);
+
             return _mapper.Map<UserDTO>(userEntity);
         }
 
-        public UserDTO GetName(string name)
+        public async Task<UserDTO> FindUserByEmail(string email)
         {
-            var userEntity = _userRepository.GetName(name);
+            var userEntity = await _userRepository.FindUserByEmail(email);
+
             return _mapper.Map<UserDTO>(userEntity);
         }
 
-        public UserDTO GetUser(string email, string password)
+        public async Task<string> PostUser(UserDTO userDTO)
         {
-            var userEntity = _userRepository.GetUser(email, password);
-            return _mapper.Map<UserDTO>(userEntity);
-        }
+            var userEntity = new User(userDTO.UserName, userDTO.Email, HashPass.Create(userDTO.Password, Environment.GetEnvironmentVariable("AUTH_SALT")));
 
-        public UserDTO GetUser(string email)
-        {
-            var userEntity = _userRepository.GetUser(email);
-            return _mapper.Map<UserDTO>(userEntity);
-        }
-
-        public int? GetUserId(string email)
-        {
-            var userEntity = _userRepository.GetUser(email);
-            return _mapper.Map<int?>(userEntity);
-        }
-
-        public async Task PostUser(UserDTO user)
-        {
-            var userEntity = _mapper.Map<User>(user);
             await _userRepository.PostUser(userEntity);
+
+            return userEntity.Id.ToString();
         }
 
-        public UserDTO Validar(UserDTO userDTO)
+        public async Task<bool> ValidateEmail(UserDTO userDTO)
         {
-            User user = new User
-            {
-                Email = userDTO.Email
-            };
+            var userEntity = await _userRepository.ValidateEmail(userDTO.Email);
 
-            var userEntity = _userRepository.Validar(user);
-            return _mapper.Map<UserDTO>(userEntity);
+            return _mapper.Map<bool>(userEntity);
         }
 
-        public string CreateToken(UserDTO userDTO)
+        public async Task<bool> ValidateUserName(UserDTO userDTO)
         {
-            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"));
-            var signingCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-            var tokenOptions = new JwtSecurityToken(
-                issuer: "https://localhost:5001",
-                audience: "https://localhost:5001",
-                claims: new List<Claim>
-                {
-                            new Claim(ClaimTypes.NameIdentifier, userDTO.Id.ToString()),
-                            new Claim(ClaimTypes.Name, userDTO.UserName.ToString()),
-                },
-                expires: DateTime.Now.AddMinutes(30),
-                signingCredentials: signingCredentials
-                );
+            var userEntity = await _userRepository.ValidateUserName(userDTO.UserName);
 
-            var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
-
-            return tokenString;
+            return _mapper.Map<bool>(userEntity);
         }
 
         public bool ValidateHash(UserDTO userDTO, UserDTO user)
@@ -99,17 +74,45 @@ namespace CryptoBoard.Application.Services
             return HashPass.Validate(userDTO.Password, Environment.GetEnvironmentVariable("AUTH_SALT"), user.Password);
         }
 
-        public UserDTO NewUser(UserDTO userDTO)
+        public async Task<object> LoginUser(UserDTO userDTO)
         {
-            UserDTO user = new UserDTO
+            try
             {
-                UserName = userDTO.UserName,
-                Email = userDTO.Email,
-                Password = HashPass.Create(userDTO.Password, Environment.GetEnvironmentVariable("AUTH_SALT")),
-                CreationDate = DateTime.Now
-            };
+                var userReturn = await FindUserByEmail(userDTO.Email);
 
-            return user;
+                if (userReturn == null || !ValidateHash(userDTO, userReturn))
+                {
+                    throw new AppException("Email ou Senha incorretos");
+                }
+
+                return new { Token = _jWTService.CreateToken(userReturn), userReturn.Id };
+            }
+            catch (Exception error)
+            {
+                return error.ToString();
+            }
+        }
+
+        public async Task<string> RegisterUser(UserDTO userDTO)
+        {
+            try
+            {
+                if (await ValidateEmail(userDTO))
+                {
+                    throw new AppException("Email já cadastrado no sistema");
+                }
+
+                if (await ValidateUserName(userDTO))
+                {
+                    throw new AppException("Nome já cadastrado no sistema");
+                }
+
+                return await PostUser(userDTO);
+            }
+            catch (Exception error)
+            {
+                return error.ToString();
+            }
         }
     }
 }

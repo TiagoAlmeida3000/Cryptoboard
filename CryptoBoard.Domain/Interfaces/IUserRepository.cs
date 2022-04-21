@@ -9,12 +9,16 @@ namespace CryptoBoard.Domain.Interfaces
 {
     public interface IUserRepository
     {
-        User FindUser(int id);
-        int? GetUserId(string email);
-        User GetUser(string email, string password);
-        User GetUser(string email);
-        User GetName(string name);
-        User Validar(User user);
-        Task PostUser(User user);
+        Task<User> FindUserById(int id);
+
+        Task<User> FindUserByEmail(string email);
+
+        Task<int> GetUserId(string email);
+
+        Task<bool> ValidateEmail(string email);
+
+        Task<bool> ValidateUserName(string userName);
+
+        Task<User> PostUser(User user);
     }
 }

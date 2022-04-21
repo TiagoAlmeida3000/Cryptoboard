@@ -9,15 +9,20 @@ namespace CryptoBoard.Application.Interfaces
 {
     public interface IUserService
     {
-        UserDTO FindUser(int id);
-        int? GetUserId(string email);
-        UserDTO GetUser(string email, string password);
-        UserDTO GetUser(string email);
-        UserDTO GetName(string name);
-        UserDTO Validar(UserDTO user);
-        Task PostUser(UserDTO user);
-        string CreateToken(UserDTO userDTO);
+        Task<UserDTO> FindUserById(int id);
+
+        Task<UserDTO> FindUserByEmail(string email);
+
+        Task<bool> ValidateEmail(UserDTO user);
+
+        Task<bool> ValidateUserName(UserDTO userDTO);
+
+        Task<string> PostUser(UserDTO userDTO);
+
         bool ValidateHash(UserDTO userDTO, UserDTO user);
-        UserDTO NewUser(UserDTO userDTO);
+
+        Task<object> LoginUser(UserDTO userDTO);
+
+        Task<string> RegisterUser(UserDTO userDTO);
     }
 }

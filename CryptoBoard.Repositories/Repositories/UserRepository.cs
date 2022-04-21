@@ -1,6 +1,7 @@
 ﻿using CryptoBoard.Domain.Entities;
 using CryptoBoard.Domain.Interfaces;
 using CryptoBoard.Infra.Data.Context;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
@@ -14,44 +15,44 @@ namespace CryptoBoard.Infra.Data.Repositories
     public class UserRepository : IUserRepository, IDisposable
     {
         protected readonly ApplicationDbContext _applicationDbContext;
+
         public UserRepository(ApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
         }
-        public User FindUser(int id)
+
+        public async Task<User> FindUserById(int id)
         {
-            return _applicationDbContext.users.Find(id);
+            return await _applicationDbContext.users.FindAsync(id);
         }
 
-        public User GetName(string name)
+        public async Task<User> FindUserByEmail(string email)
         {
-            return _applicationDbContext.users.FirstOrDefault(u => u.UserName == name);
+            return await _applicationDbContext.users.Where(u => u.Email == email).FirstOrDefaultAsync();
         }
 
-        public User GetUser(string email, string password)
+        public async Task<int> GetUserId(string email)
         {
-            return _applicationDbContext.users.FirstOrDefault(u => u.Email == email && u.Password == password);
+            return await _applicationDbContext.users.Where(u => u.Email == email).Select(u => u.Id).FirstOrDefaultAsync();
         }
 
-        public User GetUser(string email)
+        public async Task<User> PostUser(User user)
         {
-            return _applicationDbContext.users.FirstOrDefault(u => u.Email == email);
-        }
+            var entity = _applicationDbContext.Add(user);
 
-        public int? GetUserId(string email)
-        {
-            return _applicationDbContext.users.FirstOrDefault(u => u.Email == email)?.Id;
-        }
-
-        public async Task PostUser(User user)
-        {
-            _applicationDbContext.Add(user);
             await _applicationDbContext.SaveChangesAsync();
+
+            return entity.Entity;
         }
 
-        public User Validar(User user)
+        public async Task<bool> ValidateEmail(string email)
         {
-            return _applicationDbContext.users.Where(u => u.Email == user.Email).FirstOrDefault();
+            return await _applicationDbContext.users.AnyAsync(u => u.Email == email);
+        }
+
+        public async Task<bool> ValidateUserName(string userName)
+        {
+            return await _applicationDbContext.users.AnyAsync(u => u.UserName == userName);
         }
 
         #region Disposed https://docs.microsoft.com/pt-br/dotnet/standard/garbage-collection/implementing-dispose

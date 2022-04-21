@@ -9,9 +9,13 @@ namespace CryptoBoard.Domain.Entities
     public class WatchList
     {
         public int Id { get; set; }
+
         public int SymbolsId { get; set; }
+
         public DateTime CreationDate { get; set; }
+
         public int UserId { get; set; }
+
         public virtual User User { get; set; }
     }
 }

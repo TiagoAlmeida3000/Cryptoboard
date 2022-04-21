@@ -13,28 +13,32 @@ namespace CryptoBoard.Application.Services
     public class BinanceService : IBinanceService
     {
         private IBinanceRepository _binanceRepository;
+
         private readonly IMapper _mapper;
 
         public BinanceService(IBinanceRepository binanceRepository, IMapper mapper)
         {
             _binanceRepository = binanceRepository;
+
             _mapper = mapper;
         }
 
         public async Task<int> CountSymbols()
         {
-            return await _binanceRepository.CountSymbols();
-            
+            return await _binanceRepository.CountSymbols();       
         }
+
         public async Task<IEnumerable<SymbolsDTO>> GetListSymbols(int skip, int take)
         {
             var symbolsEntities = await _binanceRepository.GetListSymbols(skip, take);
+
             return _mapper.Map<IEnumerable<SymbolsDTO>>(symbolsEntities);
         }
 
         public async Task<SymbolsDTO> GetSymbolId(int? id)
         {
             var symbolsEntities = await _binanceRepository.GetSymbolId(id);
+
             return _mapper.Map<SymbolsDTO>(symbolsEntities);
         }
 
@@ -42,6 +46,5 @@ namespace CryptoBoard.Application.Services
         {
             await _binanceRepository.LoadCoinList();
         }
-
     }
 }

@@ -14,6 +14,7 @@ namespace CryptoBoard.Infra.Data.Repositories
     public class BinanceRepository : IBinanceRepository
     {
         ApplicationDbContext _applicationDbContext;
+
         public BinanceRepository(ApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
@@ -40,18 +41,17 @@ namespace CryptoBoard.Infra.Data.Repositories
 
             var result = await url.GetJsonAsync<CoinList>();
 
-
             foreach (Symbols coin in result.symbols)
             {
-                var getcoin = _applicationDbContext.symbols.FirstOrDefault(u => u.symbol == coin.symbol);
+                var getcoin = _applicationDbContext.symbols.FirstOrDefaultAsync(u => u.symbol == coin.symbol);
+
                 if (getcoin == null)
                 {
                     _applicationDbContext.Add(coin);
+
                     await _applicationDbContext.SaveChangesAsync();
                 }
-
             }
-
         }
     }
 }

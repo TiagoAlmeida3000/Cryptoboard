@@ -40,6 +40,7 @@ namespace CryptoBoard.Infra.IoC
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
              .AddJwtBearer(options =>
@@ -47,21 +48,30 @@ namespace CryptoBoard.Infra.IoC
                  options.TokenValidationParameters = new TokenValidationParameters
                  {
                      ValidateIssuer = true,
+
                      ValidateAudience = true,
+
                      ValidateLifetime = true,
+
                      ValidateIssuerSigningKey = true,
 
                      ValidIssuer = "https://localhost:5001",
+
                      ValidAudience = "https://localhost:5001",
+
                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"))
                  };
              });
 
             services.AddScoped<IBinanceRepository, BinanceRepository>();
+
             services.AddScoped<IUserRepository, UserRepository>();
 
             services.AddScoped<IBinanceService, BinanceService>();
+
             services.AddScoped<IUserService, UserService>();
+
+            services.AddScoped<IJWTService, JWTService>();
 
             services.AddAutoMapper(typeof(DomainToDToMappingProfile));
 

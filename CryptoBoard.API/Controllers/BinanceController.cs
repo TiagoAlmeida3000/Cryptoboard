@@ -39,10 +39,8 @@ namespace CryptoBoard.API.Controllers
 
         [HttpGet("details/{id}")]
         public async Task<IActionResult> Details(int id)
-        {
-            SymbolsDTO symbol = await _binanceService.GetSymbolId(id);
-
-            return Ok(new { symbol });
+        {   
+            return Ok(await _binanceService.GetSymbolId(id));
         }
     }
 }
