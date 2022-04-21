@@ -26,15 +26,10 @@ namespace CryptoBoard.API.Controllers
             return Ok();
         }
 
-
         [HttpGet("listCryptocurrencies/{skip:int}/{take:int}")]
         public async Task<IActionResult> ListCryptocurrencies([FromRoute] int skip = 0, [FromRoute] int take = 100)
         {
-            var symbols = await _binanceService.GetListSymbols(skip, take);
-            var totalCryotoResult = await _binanceService.CountSymbols();
-            double totalpaginationbar = Math.Ceiling((double)totalCryotoResult / take);
-
-            return Ok(new { symbols, totalCryotoResult, totalpaginationbar });
+            return Ok(await _binanceService.CryptocurrenciesData(skip, take));
         }
 
         [HttpGet("details/{id}")]

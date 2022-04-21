@@ -16,5 +16,7 @@ namespace CryptoBoard.Application.Interfaces
         Task<IEnumerable<SymbolsDTO>> GetListSymbols(int skip, int take);
 
         Task<int> CountSymbols();
+
+        Task<object> CryptocurrenciesData(int skip, int take);
     }
 }

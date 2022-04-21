@@ -46,5 +46,16 @@ namespace CryptoBoard.Application.Services
         {
             await _binanceRepository.LoadCoinList();
         }
+
+        public async Task<object> CryptocurrenciesData(int skip, int take)
+        {
+            var symbols = await GetListSymbols(skip, take);
+
+            var totalCryotoResult = await CountSymbols();
+
+            double totalpaginationbar = Math.Ceiling((double)totalCryotoResult / take);
+
+            return new { symbols, totalCryotoResult, totalpaginationbar };
+        }
     }
 }
